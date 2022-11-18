@@ -78,6 +78,18 @@ class Tab_ros_s:
         roznica = self.pojemnosc - len(self.dane)
         self.dane += [0] * roznica
 
+    def sortuj(self):
+        n = len(self.dane)
+        while n > 1:
+            zamien = False
+            for l in range(0, n - 1):
+                if self.dane[l] > self.dane[l + 1]:
+                    self.dane[l], self.dane[l + 1] = self.dane[l + 1], self.dane[l]
+                    zamien = True
+            n -= 1
+            if zamien == False:
+                break
+
     def __str__(self):
         text = ''
         for x in range(self.zajetosc):
@@ -95,9 +107,10 @@ x.ustal(5,1)
 x.usun_el(1)
 x.uprosc()
 
-x.dane = [7,3,0,0,0,0,0,0,0]
+x.dane = [2,1,5,3,6]
 x.zajetosc = 5
-x.pojemnosc = 9
-x.przyrost = 3
+x.pojemnosc = 5
+x.przyrost = 5
+x.sortuj()
 print(x)
 
