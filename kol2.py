@@ -6,10 +6,11 @@ class Tab_ros_s:
     pojemnosc: int
     przyrost: int
 
-    def __init__(self, przyrost):
-        self.dane = []
-        self.zajetosc = 0
-        self.pojemnosc = 0
+    def __init__ (self, zajetosc = 0, pojemnosc = 0, dane = [], przyrost = ...):
+#   def __init__(self, przyrost):
+        self.dane = dane
+        self.zajetosc = zajetosc
+        self.pojemnosc = pojemnosc
         self.przyrost = przyrost
 
     def ustal(self, idx: int, wartosc: float):
@@ -17,6 +18,7 @@ class Tab_ros_s:
         while self.pojemnosc < idx+1:
             self.pojemnosc += self.przyrost
         temp = [0] * self.pojemnosc
+
         i = 0
         for x in self.dane:
             temp[i] = x
@@ -25,7 +27,7 @@ class Tab_ros_s:
         self.dane = temp
 
         i = -1
-        temp = 0
+
         while True:
             if self.dane[i] != 0:
                 temp = -i - 1
@@ -34,7 +36,7 @@ class Tab_ros_s:
         self.zajetosc = self.pojemnosc - temp
 
     def pobierz(self, idx: int) -> float:
-        if idx + 1 > self.zajetosc:
+        if idx > self.zajetosc:
             return 0
         return self.dane[idx]
 
@@ -65,14 +67,8 @@ class Tab_ros_s:
             temp[x] = self.dane[x]
         self.dane = temp
 
-        #jesli zajetosc jest mniejsza od przyrostu
-        roznica = self.przyrost - self.zajetosc
-        if roznica > 0:
-            self.dane += [0]*roznica
-
         self.pojemnosc = len(self.dane)
-
-        # dodanie jesli pojemnosc nie jest wielokrotnoscia przyrostu
+        # dodanie 0 jesli pojemnosc nie jest wielokrotnoscia przyrostu
         while (self.pojemnosc % self.przyrost) != 0:
             self.pojemnosc += 1
         roznica = self.pojemnosc - len(self.dane)
@@ -81,36 +77,41 @@ class Tab_ros_s:
     def sortuj(self):
         n = len(self.dane)
         while n > 1:
-            zamien = False
             for l in range(0, n - 1):
                 if self.dane[l] > self.dane[l + 1]:
                     self.dane[l], self.dane[l + 1] = self.dane[l + 1], self.dane[l]
-                    zamien = True
             n -= 1
-            if zamien == False:
+
+
+        #zajetosc
+        i = -1
+        while True:
+            if self.dane[i] != 0:
+                temp = -i - 1
                 break
+            i = i - 1
+        self.zajetosc = self.pojemnosc - temp
 
-    def __str__(self):
-        text = ''
-        for x in range(self.zajetosc):
-             text += str(self.dane[x]) + '; '
-        return text
+    def print(self):
+        text = self.dane[0:self.zajetosc]
+        print(*text, sep=";")
 
 
 
-x = Tab_ros_s(4)
+x = Tab_ros_s(przyrost=4)
 x.ustal(0,7)
 x.ustal(1,5)
 x.ustal(2, 3)
 x.ustal(4,4)
-x.ustal(5,1)
 x.usun_el(1)
+print(x.pobierz(3))
 x.uprosc()
 
-x.dane = [2,1,5,3,6]
+x.dane = [7,3,0,0,0,0,0,0,0]
 x.zajetosc = 5
-x.pojemnosc = 5
-x.przyrost = 5
+x.pojemnosc = 9
+x.przyrost = 3
+#x.uprosc()
 x.sortuj()
-print(x)
+x.print()
 
