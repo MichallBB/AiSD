@@ -50,14 +50,41 @@ class BinarySearchTree:
         for i in list_:
             self.insert(i)
 
+    # która sprawdzi czy w drzewie znajduje się węzeł o wskazanej wartości
+    def contains(self, value: Any) -> bool:
+        current_node = self.root
+        while current_node is not None:
+            if value < current_node.value:
+                current_node = current_node.left_child
+            elif value > current_node.value:
+                current_node = current_node.right_child
+            elif value == current_node.value:
+                return True
+        return False
 
-root = BinaryNode(5)
-root.left_child = BinaryNode(3)
-root.right_child = BinaryNode(7)
-root.left_child.left_child = BinaryNode(2)
-root.left_child.right_child = BinaryNode(4)
-root.right_child.left_child = BinaryNode(6)
+    def remove(self, value: Any) -> None:
+        self.root = self._remove(self.root, value)
 
-root = BinarySearchTree(root)
+    def _remove(self, node: BinaryNode, value: Any) -> BinaryNode:
+        return BinaryNode(value)
 
-root.insert(1)
+
+
+
+
+
+node = BinaryNode(5)
+node.left_child = BinaryNode(3)
+node.right_child = BinaryNode(7)
+node.left_child.left_child = BinaryNode(2)
+node.left_child.right_child = BinaryNode(4)
+node.right_child.left_child = BinaryNode(6)
+
+root = BinarySearchTree(node)
+
+min = node.min()
+print(min)
+
+root.insert(9)
+root.insert(7)
+print(root.contains(55))
