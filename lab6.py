@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, List
 
 
 class BinaryNode:
@@ -6,57 +6,58 @@ class BinaryNode:
     left_child: 'BinaryNode'
     right_child: 'BinaryNode'
 
-    def __init__(self, value, left_child=None, right_child=None):
+    def __init__(self, value: Any, left_child=None, right_child=None):
+        self.value = value
         self.left_child = left_child
         self.right_child = right_child
-        self.value = value
-
-    def is_leaf(self):
-        if (self.right_child == None and self.left_child == None):
-            return True
-        return False
 
     def add_left_child(self, value: Any):
-        if self.left_child is None:
-            self.left_child = value
+        self.left_child = BinaryNode(value)
 
     def add_right_child(self, value: Any):
-        if self.right_child is None:
-            self.right_child = value
+        self.right_child = BinaryNode(value)
+
+    def min(self):
+        current_node = self
+        while current_node.left_child is not None:
+            current_node = current_node.left_child
+        return current_node
 
     def __str__(self):
-        return self.value
-
-    def traverse_in_order(self, visit: Callable[[Any], None]):
-        if self.left_child != None:
-            self.left_child.traverse_in_order()
-        print(self.value)
-        if self.right_child != None:
-            self.right_child.traverse_in_order()
+        return str(self.value)
 
 
-class BinaryTree:
+class BinarySearchTree:
     root: BinaryNode
 
     def __init__(self, root):
         self.root = root
 
+    def insert(self, value: Any) -> None:
+        node = self._insert(self.root, value)
+        self.root = node
 
-A = BinaryNode(10)
-B = BinaryNode(9)
-C = BinaryNode(2)
-D = BinaryNode(4)
-E = BinaryNode(6)
-F = BinaryNode(1)
-G = BinaryNode(3)
+    def _insert(self, node: BinaryNode, value: Any) -> BinaryNode:
+        if node is None:
+            return BinaryNode(value)
+        elif value < node.value:
+            node.left_child = self._insert(node.left_child, value)
+        else:
+            node.right_child = self._insert(node.right_child, value)
+        return node
 
-A.add_right_child(C)
-A.add_left_child(B)
-B.add_left_child(F)
-B.add_right_child(G)
-C.add_left_child(D)
-C.add_right_child(E)
+    def insert_list(self, list_: List[Any]) -> None:
+        for i in list_:
+            self.insert(i)
 
 
+root = BinaryNode(5)
+root.left_child = BinaryNode(3)
+root.right_child = BinaryNode(7)
+root.left_child.left_child = BinaryNode(2)
+root.left_child.right_child = BinaryNode(4)
+root.right_child.left_child = BinaryNode(6)
 
-print(D.is_leaf())
+root = BinarySearchTree(root)
+
+root.insert(1)
