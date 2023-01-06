@@ -39,8 +39,9 @@ class LinkedList:
         new_node = Node(value)
         if self.head == None:
             self.head = self.tail = Node(value)
-        new_node.next = self.head
-        self.head = new_node
+        else:
+            new_node.next = self.head
+            self.head = new_node
 
     def append(self, value):
         current = self.head
@@ -111,15 +112,69 @@ class LinkedList:
         after.next = pointer
         return
 
-
     def len(self):
         pointer = self.head
         counter = 1
+        if self.head is None:
+            return 0
         while True:
             if pointer.next is None:
                 return counter
             counter += 1
             pointer = pointer.next
+
     def test(self):
         pointer = self.head
         return pointer.next
+
+
+# LIFO
+class Stack:
+    def __init__(self):
+        self._storage = LinkedList()
+
+    def push(self, element: Any) -> None:
+        self._storage.push(element)
+
+    def pop(self) -> Any:
+        return self._storage.pop().value
+
+    def __len__(self):
+        return self._storage.len()
+
+# FIFO
+class Queue:
+    def __init__(self):
+        self._storage = LinkedList()
+
+    def enqueue(self, element: Any) -> None:
+        self._storage.append(element)
+
+    def dequeue(self) -> Any:
+        return self._storage.pop().value
+
+    def __len__(self):
+        return self._storage.len()
+
+# LIFO
+stack = Stack()
+assert len(stack) == 0
+stack.push(3)
+stack.push(10)
+stack.push(1)
+assert len(stack) == 3
+top_value = stack.pop()
+assert top_value == 1
+assert len(stack) == 2
+
+# FIFO
+queue = Queue()
+assert len(queue) == 0
+queue.enqueue('klient1')
+queue.enqueue('klient2')
+queue.enqueue('klient3')
+assert str(queue) == 'klient1, klient2, klient3'
+client_first = queue.dequeue()
+assert client_first == 'klient1'
+assert str(queue) == 'klient2, klient3'
+assert len(queue) == 2
