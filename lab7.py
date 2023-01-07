@@ -69,15 +69,15 @@ class Graph:
                     tekst.append(neighbour.destination)
         print(tekst)
 
-    def traverse_depth_first(self):
-        dfs(list(self.adjacencies.keys())[0], [])
+#     def traverse_depth_first(self):
+#         dfs(list(self.adjacencies.keys())[0], [])
         
-        def dfs(v: Vertex, visited: List[Vertex]):
-            visited.append(v.data)
-            for neighbour in self.adjacencies[v]:
-                if self.adjacencies[neighbour.destination] not in visited:
-                    dfs(neighbour, )
-                    print(neighbour.destination)
+#         def dfs(v: Vertex, visited: List[Vertex]):
+#             visited.append(v.data)
+#             for neighbour in self.adjacencies[v]:
+#                 if self.adjacencies[neighbour.destination] not in visited:
+#                     dfs(neighbour, )
+#                     print(neighbour.destination)
 
 
 graf = Graph()
@@ -99,5 +99,5 @@ graf.add_directed_edge(v5, v1, 2)
 graf.add_directed_edge(v5, v2, 2)
 
 
-#test = graf.traverse_breadth_first()
-test = graf.traverse_depth_first()
+test = graf.traverse_breadth_first()
+#test = graf.traverse_depth_first()
