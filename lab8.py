@@ -4,7 +4,7 @@ from typing import Dict, List
 
 class Pathfinder:
     cost_set: Dict[Vertex, float]
-    parent_set: Dict[Vertex, Vertex]  # child -> parent
+    parent_set: Dict[Vertex, Vertex]
     graph: Graph
 
     def __init__(self, graph: Graph):
