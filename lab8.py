@@ -1,71 +1,104 @@
-# Zad todo
-# algorytm Dijkstry
-# Wyszukiwanie najkrótszej ścieżki w grafie nieważonym - przechodzenie wszerz
+from lab7 import Graph, Edge, Vertex
+from typing import Dict, List
 
 
+class Pathfinder:
+    cost_set: Dict[Vertex, float]
+    parent_set: Dict[Vertex, Vertex]  # child -> parent
+    graph: Graph
 
-# from enum import Enum
-# from typing import Optional
+    def __init__(self, graph: Graph):
+        self.cost_set = {}
+        self.parent_set = {}
+        self.graph = graph
+
+    def dijkstra(self, start_node: Vertex, end_node: Vertex) -> List[Vertex]:
+        open_set = []
+        closed_set = []
+
+        self.cost_set[start_node] = 0.0
+        closed_set.append(start_node)
+        for edge in self.graph.adjacencies[start_node]:
+            open_set.append(edge)
+            self.parent_set[edge.destination] = edge.source
+
+        while True:
+            # update costs
+            for edge in open_set:
+                if edge.destination not in self.cost_set or self.cost_set[edge.source] + edge.weight < self.cost_set[edge.destination]:
+                    self.parent_set[edge.destination] = edge.source
+                    self.cost_set[edge.destination] = self.cost_set[edge.source] + edge.weight
+
+            # pop lowest cost
+            edge_to_explore = self.pop_lowest_cost(open_set)
+            vertex_to_explore = edge_to_explore.destination
+
+            print(f'from: {edge_to_explore.source.data} to {edge_to_explore.destination.data}')
+
+            if vertex_to_explore is end_node:
+                print('Reached end!')
+                return self.retrace_path(end_node, start_node)
+
+            # add edges
+            closed_set.append(vertex_to_explore)
+
+            for edge in self.graph.adjacencies[vertex_to_explore]:
+                if edge.destination not in closed_set:
+                    open_set.append(edge)
+
+    def pop_lowest_cost(self, open_set: List[Edge]):
+        lowest_cost = float('inf')
+        index = -1
+
+        for i in range(len(open_set)):
+            iedge = open_set[i]
+            if self.cost_set[iedge.destination] < lowest_cost:
+                lowest_cost = self.cost_set[iedge.destination]
+                index = i
+
+        return open_set.pop(index)
+
+    def retrace_path(self, end_node: Vertex, start_node: Vertex) -> List[Vertex]:
+        return_list = [end_node]
+        pointer = end_node
+
+        while pointer is not start_node:
+            pointer = self.parent_set[pointer]
+            return_list.append(pointer)
+
+        return_list.reverse()
+        return return_list
 
 
-# class EdgeType(Enum):
-#     directed = 1
-#     undirected = 2
+graf = Graph()
+v0 = graf.create_vertex('v0')
+v1 = graf.create_vertex('v1')
+v2 = graf.create_vertex('v2')
+v3 = graf.create_vertex('v3')
+v4 = graf.create_vertex('v4')
+v5 = graf.create_vertex('v5')
+
+graf.add_directed_edge(v0, v1, 2)
+graf.add_directed_edge(v0, v5, 2)
+graf.add_directed_edge(v2, v3, 2)
+graf.add_directed_edge(v2, v1, 2)
+graf.add_directed_edge(v3, v4, 2)
+graf.add_directed_edge(v4, v1, 2)
+graf.add_directed_edge(v4, v5, 2)
+graf.add_directed_edge(v5, v1, 2)
+graf.add_directed_edge(v5, v2, 2)
 
 
-# class Vertex:
-#     def __init__(self, data, index):
-#         self.data = data
-#         self.index = index
-
-#     def __repr__(self):
-#         return f'{self.data}'
+def print_vertex(vertex):
+    print(vertex.data)
 
 
-# class Edge:
-#     def __init__(self, source, destination, weight=None):
-#         self.weight = weight
-#         self.source = source
-#         self.destination = destination
+print('Traverse breadth first')
+graf.traverse_breadth_first()
+print('Traverse breadth first')
+graf.traverse_breadth_first2()
+print('Traverse depth first')
+graf.traverse_depth_first(print_vertex)
 
-#     def __repr__(self):
-#         return f'{self.source} -> {self.destination}'
-
-
-# class Graph:
-#     def __init__(self, adjacencies={}):
-#         self.adjacencies = adjacencies
-
-#     def create_vertex(self, data) -> Vertex:
-#         new = Vertex(data, len(self.adjacencies))
-#         self.adjacencies[new] = []
-#         return new
-
-#     def add_directed_edge(self, source: Vertex, destination: Vertex, weight: Optional[float] = None):
-#         new = Edge(source, destination, weight)
-#         self.adjacencies[source].append(new)
-
-#     def add_undirected_edge(self, source, destination, weight=None):
-#         new = Edge(source, destination, weight)
-#         new2 = Edge(destination, source, weight)
-#         self.adjacencies[source].append(new)
-#         self.adjacencies[destination].append(new2)
-
-#     def add(self, edge, source, destination, weight=None):
-#         if edge == EdgeType.directed:
-#             self.add_directed_edge(source, destination, weight)
-#         else:
-#             self.add_undirected_edge(source, destination, weight)
-
-
-# graf = Graph()
-# A = graf.create_vertex('A')
-# B = graf.create_vertex('B')
-# C = graf.create_vertex('C')
-# D = graf.create_vertex('D')
-# E = graf.create_vertex('E')
-# F = graf.create_vertex('F')
-
-# graf.add_directed_edge(A, C, 2)
-# graf.add_directed_edge(A, C, 2)
-# graf.add_directed_edge(A, C, 2)
+paf = Pathfinder(graf)
+paf.dijkstra(v5,v4)
