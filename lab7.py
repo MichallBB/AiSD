@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Optional, Callable, Any, List
+from typing import Optional, Callable, Any, Dict, List
+from queue import Queue
 
 
 class EdgeType(Enum):
@@ -27,15 +28,22 @@ class Edge:
 
 
 class Graph:
-    def __init__(self, adjacencies={}):
-        self.adjacencies = adjacencies
+    def __init__(self, adjacencies: Dict[Vertex, List[Edge]]=None):
+        if adjacencies is None:
+            self.adjacencies = {}
+        else:
+            self.adjacencies = adjacencies
 
     def create_vertex(self, data) -> Vertex:
         new = Vertex(data, len(self.adjacencies))
         self.adjacencies[new] = []
         return new
 
-    def add_directed_edge(self, source: Vertex, destination: Vertex, weight: Optional[float] = None):
+    def add_directed_edge(self,
+                          source: Vertex,
+                          destination: Vertex,
+                          weight: Optional[float] = None
+                          ):
         new = Edge(source, destination, weight)
         self.adjacencies[source].append(new)
 
@@ -61,7 +69,6 @@ class Graph:
         tekst.append(first)
         while queue:
             v = queue.pop(0)
-            #print(v, end=" ")
             for neighbour in v:
                 if self.adjacencies[neighbour.destination] not in visited:
                     visited.append(self.adjacencies[neighbour.destination])
@@ -69,15 +76,58 @@ class Graph:
                     tekst.append(neighbour.destination)
         print(tekst)
 
-#     def traverse_depth_first(self):
-#         dfs(list(self.adjacencies.keys())[0], [])
-        
-#         def dfs(v: Vertex, visited: List[Vertex]):
-#             visited.append(v.data)
-#             for neighbour in self.adjacencies[v]:
-#                 if self.adjacencies[neighbour.destination] not in visited:
-#                     dfs(neighbour, )
-#                     print(neighbour.destination)
+    def traverse_breadth_first2(self, source=None) -> None:
+        visited = {}
+        bfs_traversal_output = []
+        queue = Queue()
+        for node in self.adjacencies.keys():
+            visited[node] = False
+
+        if source is None:
+            s = list(self.adjacencies.keys())[0]
+        else:
+            s = source
+        visited[s] = True
+        queue.put(s)
+
+        while not queue.empty():
+            u = queue.get()
+            bfs_traversal_output.append(u)
+
+            for v in self.adjacencies[u]:
+                if not visited[v.destination]:
+                    visited[v.destination] = True
+                    queue.put(v.destination)
+        print(bfs_traversal_output)
+
+    def traverse_depth_first(self, visit: Callable[[Any], None]) -> None:
+        visited = []
+        start = list(self.adjacencies.keys())[0]
+
+        def dfs(v: Vertex):
+            visit(v)
+            visited.append(v)
+            for neighbour in self.adjacencies[v]:
+                if neighbour.destination not in visited:
+                    dfs(neighbour.destination)
+        dfs(start)
+
+    # def dijkstra(self, start):
+    #     start.distance = 0
+    #     queue = []
+    #     heappush(queue, start)
+    #     i=0
+    #     while queue:
+    #         current_vertex = heappop(queue)
+    #         for neighbor in self.adjacencies[current_vertex]:
+    #             xxx = self.adjacencies[current_vertex][i]
+    #             distance = current_vertex.distance + xxx.weight
+    #             i += 1
+    #             if distance < neighbor.weight:
+    #                 neighbor.weight = distance
+    #                 heappush(queue, neighbor)
+    #
+    #     return {v.data: self.adjacencies[v] for v in self.adjacencies}
 
 
 graf = Graph()
@@ -99,5 +149,12 @@ graf.add_directed_edge(v5, v1, 2)
 graf.add_directed_edge(v5, v2, 2)
 
 
-test = graf.traverse_breadth_first()
-#test = graf.traverse_depth_first()
+def print_vertex(vertex):
+    print(vertex.data)
+
+print('Traverse breadth first')
+graf.traverse_breadth_first()
+print('Traverse breadth first')
+graf.traverse_breadth_first2()
+print('Traverse depth first')
+graf.traverse_depth_first(print_vertex)
